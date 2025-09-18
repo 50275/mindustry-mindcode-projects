@@ -1,0 +1,18 @@
+param team1 = @crux; 
+param team2 = @sharded; 
+setrate(1000); 
+def perform(team)
+    for i in 0...@blockCount do
+         class = lookup(block, i); 
+         quantity = fetch(buildCount, team, class);
+         maxhp = class.@maxHealth; 
+         for j in 0...quantity do 
+              target = fetch(build, team, j, class);
+              target.setprop(@health, maxhp); 
+         end; 
+    end; 
+end; 
+perform(team1); 
+perform(team2); 
+setblock(block, @stone-wall, @thisx, @thisy, @derelict, 0);
+print("Made by Hex12"); 

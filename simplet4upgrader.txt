@@ -1,0 +1,110 @@
+// We simplify all
+
+FLAG = @thisx + @thisy * 1000; 
+FLAG2 = @thisx + 1 + @thisy * 1000; 
+MONOS = countUnits(@mono); 
+def getUnit(type, flag)
+    ubind(type);
+    if @unit == null then
+        return 0; 
+    else
+        first = @unit; 
+        if first != null && first.@flag == flag then
+            return @unit; 
+        else 
+            do 
+                ubind(type);
+            loop while (@unit == null || @unit.@flag != flag) && @unit != first; 
+            if @unit == first then
+                return 0; 
+            end;
+        end; 
+    end; 
+    return @unit; 
+end; 
+def countUnits (type)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            count+=1; 
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+    return count; 
+end; 
+// soldier payEnters into destination
+// destination1 for ground
+// destination2 for air
+def payEnter(type, soldier, destination1)
+    // number of units is countUnits(lookup(unit, type.@id+1))
+    // units in queue is 
+    if type == @fortress then
+        if countUnits(lookup(unit, type.@id+1)) < MONOS - router1.@payloadCount - (reconstructor1.@config != 0) then
+            
+        else
+            return 1; 
+        end; 
+    else 
+        if countUnits(lookup(unit, type.@id+1)) < MONOS - (reconstructor1.@config != 0) then
+            
+        else
+            return 1; 
+        end;
+    end; 
+    if soldier.@dead then
+        soldier = getUnit(type, 0); 
+    else
+        getUnit(type, FLAG);
+    end; 
+
+    /*soldier = getUnit(type, FLAG); 
+    if soldier == 0 then
+        getUnit(type, 0); 
+    end; */
+    
+    flag(FLAG); 
+    boost(1); 
+    // If it's a ground unit, force it into ground-only
+    pathfind(destination1.@x, destination1.@y); 
+    if abs(@unit.@x - destination1.@x) < 3 && abs(@unit.@y - destination1.@y) <3 then
+        payEnter(); 
+    end; 
+    // payEnter(); 
+    return soldier; 
+end;
+scepter = payEnter(@fortress, scepter, router1); 
+vela = payEnter(@quasar, vela, reconstructor1); 
+arkyid = payEnter(@spiroct, arkyid, reconstructor1);
+antumbra = payEnter(@zenith, antumbra, reconstructor1);
+quad = payEnter(@mega, quad, reconstructor1);  
+
+// Unfortunately, the only one I have mastered is the hard-coded version... 
+if dome1.@phase-fabric < 10 then
+    if flaredome.@dead then
+        flaredome = getUnit(@flare, 0); 
+    else
+        getUnit(@flare, FLAG2);
+    end; 
+    if @unit.@type == @flare then
+        flag(FLAG2); 
+        
+        if @unit.@totalItems > 0 then
+            if @unit.@phase-fabric == 0 then
+                itemDrop(@air, 9999);
+            else
+                move(dome1.@x, dome1.@y); 
+                itemDrop(dome1, 9999); 
+            end; 
+        else
+            core = ulocate(building, core, false, out outx, out outy, out found);
+            approach(outx, outy, 6); 
+            itemTake(core, @phase-fabric, 9999); 
+        end; 
+    end; 
+end; 
+    

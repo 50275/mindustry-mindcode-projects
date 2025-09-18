@@ -1,0 +1,68 @@
+// Please refer to control5.txt
+
+// Transcribed function, counts units of `type`
+// 2024-11-07
+def countUnits (type, out count)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            count+=1; 
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+end;
+// Aggressively posess a unit. 
+def getUnit(type)
+    do
+        ubind(type); 
+    loop while @unit == null; 
+end; 
+// Find a given unit
+def findUnit(type, target)
+    do
+        ubind(type); 
+    loop while @unit != target; 
+end; 
+// 0...7 is naval. 
+// You know it's inefficient but whatever
+countUnits(@mono, out monos);
+
+for type in 0...5 do
+    base = type*5; 
+    T3 = lookup(unit, base+2); 
+    T4 = lookup(unit, base+3); 
+    countUnits(T3, out C3); 
+    countUnits(T4, out C4); 
+    
+    if C3 > 0 and C4 < monos then 
+        getUnit(T3); 
+        lancer1.shoot(@unit.@x, @unit.@y, 1);
+        print(@unit.@x); 
+        printflush(message1); 
+        while true do //@unit.@dead != 0 do
+            boost(1); 
+            move(conveyor1.@x, conveyor1.@y); 
+            payEnter(); 
+            lancer1.shoot(@unit.@x, @unit.@y, 1); 
+            print(@unit.@health);
+            printflush(message1);  
+        end; 
+    else 
+        print(C3, " ", C4); 
+        printflush(message1);
+    end; 
+    // cell1[type * 2] = C3; // Even indexes store T3
+    // cell1[type * 2 + 1] = C4; // Odd indexes store T4
+end; 
+
+// We recognize any integer 0 <= i <= 4 to produce a valid buildable T4 with ID=i*5+3 & we need to control ID=i*5+2 
+//     under the condition that cell1[i*2] > 0 && cell1[i*2+1] < monos. 
+//     but is a cell really necessary?  
+// We do not control any units in advance. We boost any units necessary to produce this result. 
+
+

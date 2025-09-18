@@ -1,0 +1,102 @@
+// Task 1 of 3 
+// Silicon unloading
+if crucible1.@silicon > 0 then
+    sorter1.config = null;
+else
+    sorter1.config = @silicon; 
+end; 
+
+// Combined resources for top left
+low = 10; 
+resource = null; 
+
+
+// Task 2 of 3
+// Don't allow more than 19 sand, 19 coal, 19 pyratite into the crucibles & their conveyors 
+sand = crucible3.@sand + crucible2.@sand + conveyor1.@sand + conveyor6.@sand + conveyor7.@sand + conveyor8.@sand; 
+coal = crucible3.@coal + crucible2.@coal + conveyor1.@coal + conveyor6.@coal + conveyor7.@coal + conveyor8.@coal; 
+pyratite = crucible3.@pyratite + crucible2.@pyratite + conveyor1.@pyratite + conveyor6.@pyratite + conveyor7.@pyratite + conveyor8.@pyratite; 
+
+low = min(sand, coal, pyratite, 50); 
+if low == sand then
+    resource = @sand; 
+elsif low == coal then
+    resource = @coal; 
+elsif low == pyratite then
+    resource = @pyratite; 
+else 
+    resource = null; 
+end; 
+if resource != null then
+    unloader1.config = resource; 
+    unloader2.config = resource; 
+    unloader1.enabled = true; 
+    unloader2.enabled = true; 
+else  
+    unloader1.enabled = false; 
+    unloader2.enabled = false;
+end; 
+// conveyor1.enabled = crucible6.@totalItems > 73; 
+
+// Crucible is running out of resources, refuse to send more
+if crucible4.@totalItems < 73 then
+    sorter2.enabled = 1; 
+    sorter2.config = null; 
+// Share excess 
+else 
+    sorter2.enabled = 0; 
+    sorter2.config = @silicon; 
+end; 
+
+
+
+
+
+// Task 3 of 3
+phase = dome1.@phase-fabric + conveyor4.@phase-fabric + conveyor5.@phase-fabric; 
+
+if phase < 5 && (!dome1.@dead) && shard1.@phase-fabric > 100 then
+    resource = @phase-fabric; 
+else
+    sand = crucible5.@sand + conveyor2.@sand + conveyor3.@sand + conveyor4.@sand + conveyor5.@sand;
+    coal = crucible5.@coal + conveyor2.@coal + conveyor3.@coal + conveyor4.@coal + conveyor5.@coal;
+    pyratite = crucible5.@pyratite + conveyor2.@pyratite + conveyor3.@pyratite + conveyor4.@pyratite + conveyor5.@pyratite;
+    low = min(sand, coal, pyratite, 20); 
+    if low == sand then
+        resource = @sand; 
+    elsif low == coal then
+        resource = @coal; 
+    elsif low == pyratite then
+        resource = @pyratite; 
+    else 
+        resource = null; 
+    end; 
+end; 
+if resource == @phase-fabric then
+    unloader6.config = @phase-fabric; 
+    unloader3.enabled = false; 
+    unloader4.enabled = false;
+    unloader5.enabled = false;
+    unloader6.enabled = true;
+elsif resource != null then
+    unloader3.config = resource; 
+    unloader4.config = resource; 
+    unloader3.enabled = true; 
+    unloader4.enabled = true; 
+    
+    unloader5.config = resource; 
+    unloader6.config = resource; 
+    unloader5.enabled = true; 
+    unloader6.enabled = true; 
+else  
+    unloader3.enabled = false; 
+    unloader4.enabled = false;
+    unloader5.enabled = false; 
+    unloader6.enabled = false;
+end; 
+
+
+
+
+
+

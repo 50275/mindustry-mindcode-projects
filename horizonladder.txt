@@ -1,0 +1,13 @@
+while @unit == null do
+    ubind(@horizon); 
+end;
+first = @unit; 
+c = 0;
+while true do
+    move(c, c); 
+    c+=1; 
+    ubind(@horizon); 
+    if @unit == first then
+        c = 0;
+    end;
+end;

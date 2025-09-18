@@ -1,0 +1,19 @@
+// Transcribed function, counts units of `type`
+// 2024-11-07
+def countUnits (type, out count)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            count+=1; 
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+end;
+countUnits(@poly, out x);
+print(x);
+printflush(message1);

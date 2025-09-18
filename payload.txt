@@ -1,0 +1,49 @@
+// Transcribed function, counts units of `type`
+// 2024-11-07
+def countUnits (type, out count)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            count+=1; 
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+end;
+countUnits(@mono, out monos); 
+// Mono reference
+target1 = router1;
+target2 = reconstructor1;
+// T4
+unit = target1.sensor(@payloadType);
+
+// check if unit is in router
+// Stops units from entering exponential reconstructor if it hits unitcap
+if unit != null then
+    id = unit.sensor(@id) + 1;
+    product = lookup(unit, id);
+    countUnits(product, out countT4);
+    print(product); 
+    print(countT4); 
+    printflush(message1);
+    
+    if countT4 < monos then
+        // We can build more T4
+        target1.config = @router; 
+        target2.enabled = true; 
+        print("We can build more T4"); 
+        printflush(message2); 
+    else
+        // We can't build more T4, just throw out T3s
+        target1.config = unit; 
+        target2.enabled = target2.@progress == 1; 
+        print("We cannot build more T4"); 
+        printflush(message2); 
+    end; 
+else
+    target2.enabled = true;
+end; 

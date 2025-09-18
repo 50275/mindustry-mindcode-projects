@@ -1,0 +1,173 @@
+noinit var switch, turret1, turret2, select1, select2; 
+
+/* TODO
+* Autoselect the 2 hails and sorters. 
+For both, 
+The block with the highest Y value will be (block1). 
+The block with the lowest Y value will be (block2). 
+Therefore there can be no confusion for the end user. Me. 
+
+I also plan on making a P-switch. However, this requires advanced methods. 
+P switch from Mario!!!!
+*/
+
+// User Input
+param unitCount = 4; 
+param spawnCount = 2; 
+param team = @crux; 
+
+setrate(1000); 
+
+// Avoid code duplication even if it extends runtime
+def find(type, number)
+    for i in 0...@links do
+        link = getlink(i); 
+        if link.@type == type then
+            if number == 0 then
+                return link; 
+            end;
+            number -= 1; 
+        end; 
+    end; 
+end; 
+switch = find(@switch, 0); 
+turret1 = find(@hail, 0); 
+turret2 = find(@hail, 1); 
+select1 = find(@sorter, 0); 
+select2 = find(@sorter, 1); 
+
+// Turret Input
+x1 = turret1.@shootX; 
+y1 = turret1.@shootY; 
+x2 = turret2.@shootX - x1;  
+y2 = turret2.@shootY - y1; 
+
+// Constants 
+displaySize = 176; 
+itemSize = 32; 
+arrowSize = 32;
+
+yArrow1 = (5+0.25)/5.5 * displaySize; 
+yArrow2 = (4+0.25)/5.5 * displaySize; 
+    
+bgc1 = 0x56; bgc2 = 0x57; bgc3 = 0x67;  
+
+// ...
+lasttime = @time; 
+previous = switch.@enabled; 
+println(switch1); 
+print(turret1); print(" "); println(turret2); 
+print(select1); print(" "); println(select2); 
+printflush(message1); 
+while !switch1.@dead && !turret1.@dead && !turret2.@dead && !select1.@dead && !select2.@dead do
+    c1 = select1.@config; 
+    c2 = select2.@config; 
+    // c1::determine unit tree i.e. dagger/nova/stell etc. tree
+    // c2::determine unit tier i.e. T1~T5. Not sure to consider core units. 
+    // Tiles are 32x32, and the display is 6x6 tiles (192x192 units) but drawable area is only 176x176. 
+    
+    turret1.enabled = turret1.@controlled; 
+    turret1.setprop(@silicon, 99); 
+    turret2.enabled = turret2.@controlled; 
+    turret2.setprop(@silicon, 99); 
+    
+    if turret1.@shooting then
+        x1 = turret1.@shootX; 
+        y1 = turret1.@shootY; 
+    end;
+    if turret2.@shooting then 
+        x2 = turret2.@shootX - x1;
+        y2 = turret2.@shootY - y1;
+    end; 
+    if @time > lasttime then
+        effect(:bubble, x1, y1); 
+        for i in 0...spawnCount do
+            effect(:spawn, x1 + x2 * i, y1 + y2 * i); 
+        end; 
+        lasttime += 1000; 
+    end; 
+    
+    ID1 = c1.@id; 
+    if c1 == null || ID1 >= 10 then
+        // draw all unit trees
+        for i in 0..9 do // these two and only these two are inclusive
+            image(displaySize \ 5 * ((i % 5)+0.5), displaySize - itemSize * (i \ 5 + 0.5) * 2, lookup(:unit, 3 * (i \ 5) + i * 5), itemSize, 0);
+            image(displaySize \ 5 * ((i % 5)+0.5), displaySize - itemSize * (i \ 5 + 1) * 2, lookup(:item, i), itemSize, 0);
+        end; 
+            triangle(0, yArrow1, 
+        arrowSize \ 4, yArrow1 + 0.25/5.5 * displaySize, 
+        arrowSize \ 4, yArrow1 - 0.25/5.5 * displaySize); // normal ratio 0.5/5.5 (1 tile size) && arrowSize \ 2
+            
+            rect(arrowSize \ 4, yArrow1 - 0.25/5.5/2 * displaySize, 0.25/5.5 * displaySize, 0.25/5.5 * displaySize); 
+        
+        drawflush(display1); clear(bgc1, bgc2, bgc3); 
+    else
+        if ID1 <= 6 then
+            IDtree = ID1 * 5 + 0;
+            // draw this Serpulean unit tree 0123456
+        else 
+            IDtree = ID1 * 5 + 3;
+            // draw this Erekir unit tree 789
+        end; 
+        // There is the tree. And the units. 
+        
+    
+        ID2 = c2.@id; 
+        if c2 == null || ID2 >= 5 then 
+            // The user has picked a tree, but not a specific unit on that tree. 
+            for i in 0...5 do
+                image(displaySize \ 5 * (i+0.5), displaySize \ 2 + itemSize \ 2, lookup(:unit, IDtree + i), itemSize, 0);
+                image(displaySize \ 5 * (i+0.5), displaySize \ 2 - itemSize \ 2, lookup(:item, i + 0), itemSize, 0);
+            end; 
+            triangle(0, yArrow2, 
+        arrowSize \ 4, yArrow2 + 0.25/5.5 * displaySize, 
+        arrowSize \ 4, yArrow2 - 0.25/5.5 * displaySize); // normal ratio 0.5/5.5 (1 tile size) && arrowSize \ 2
+            
+            rect(arrowSize \ 4, yArrow2 - 0.25/5.5/2 * displaySize, 0.25/5.5 * displaySize, 0.25/5.5 * displaySize); 
+        
+            
+        else 
+            // The user has picked a specific unit of a specific tree. 
+            unittype = lookup(:unit, IDtree + ID2); 
+            if switch.@enabled != previous then
+                previous = switch.@enabled; 
+                
+                // Spawn units! 
+                if x1 == 0 && y1 == 0 then
+                    effect(:cross, turret1.@x, turret1.@y);
+                else 
+                    for i in 0...spawnCount do 
+                        effect(:warn, x1 + x2 * i, y1 + y2 * i);
+                        for j in 0...unitCount do 
+                            print(spawn(unittype, x1 + x2 * i, y1 + y2 * i, 90, team));
+                        end; 
+                    end; 
+                    
+                end; 
+                
+            end; 
+            image(displaySize\2, displaySize\2, unittype, itemSize*2.5, 0); 
+            triangle(0, yArrow1, 
+            arrowSize \ 4, yArrow1 + 0.25/5.5 * displaySize, 
+            arrowSize \ 4, yArrow1 - 0.25/5.5 * displaySize); // normal ratio 0.5/5.5 (1 tile size) && arrowSize \ 2
+            
+            rect(arrowSize \ 4, yArrow1 - 0.25/5.5/2 * displaySize, 0.25/5.5 * displaySize, 0.25/5.5 * displaySize); 
+            
+        end; 
+    
+        drawflush(display1); clear(bgc1, bgc2, bgc3); 
+    end; 
+    
+    for i in 0...@links do
+        block = getlink(i); 
+        block.setprop(@health, 99999); 
+    end; 
+    
+    /*
+    Additional features to consider
+    -5 -1 +1 +5 buttons
+    Trigger additional spawning ??? 
+    select2: dedicate each row to each tier
+    
+    */ 
+end; 

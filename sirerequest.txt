@@ -1,0 +1,24 @@
+noinit linked etna1; noinit linked etna2; noinit linked etna3; 
+
+const L1 = @asthosus-02b-01-q-liquid-silicon-tetrafluoride; 
+const L2 = @asthosus-02b-05-liquid-nontragen; 
+
+pCap = node1.@powerNetCapacity; 
+if pCap < node1.@powerNetOut then 
+    p = 0; 
+else 
+    pStored = node1.@powerNetStored; 
+    p = pStored / pCap; 
+end; 
+
+// Enable/disable reactors with fuel saver
+for reactor in reactor1, reactor2, reactor3 do 
+    reactor.enabled = ((reactor.sensor(L1) > 12) && (reactor.sensor(L2) > 12)) ? ((p < 0.5) ? true : ((p > 0.9) ? false : reactor.@enabled)) : false; 
+end; 
+
+// Disable all completely useless etnas (useless: all reactors this etna can heat are missing or disabled) 
+// Mindcode is adding support for modded blocks in the *next* version. ... 
+
+etna1.enabled = reactor1.@enabled || reactor2.@enabled; 
+etna2.enabled = etna1.@enabled; 
+etna3.enabled = reactor3.@enabled; 

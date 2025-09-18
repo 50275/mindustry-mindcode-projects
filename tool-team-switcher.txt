@@ -1,0 +1,9 @@
+param team1 = @sharded; 
+param team2 = 4; // green team (the first operational team that isn't named) 
+println("Switches the team of the nearest player-controlled unit within the range of the scorch! Move left for team <", team2, "> and right for team <", team1, ">."); 
+printflush(message1); 
+unit = scorch1.radar(player, any, any, distance, 1);
+v = unit.@velocityX; 
+v = v >= 0; 
+vprime = not v; 
+unit.setprop(@team, v * team1 + vprime * team2); 

@@ -1,0 +1,43 @@
+// Halve the damage of ALL Serpulo units
+Vars.content.units().each(unit => {
+	if (unit.id > UnitTypes.gamma.id) return; 
+	unit.weapons.each(weapon => {
+        let bullet = weapon.bullet;
+        if (bullet != null && bullet.damage != null) {
+            bullet.damage /= 2;
+        }
+    });
+}); 
+
+// Halve the damage of almost all Serpulo turrets
+// (not implemented) Exceptions: Duo, Salvo, Spectre
+// Exceptions: Wave, Tsunami, Parallax, Segment
+Vars.content.blocks().each(block => {
+	if (block instanceof ItemTurret){
+		/* I assume that any ItemTurret that only costs
+		resources from Serpulo belongs to Serpulo. */
+		for (let i of block.requirements){
+			if (!Items.serpuloItems.contains(i.item)){
+				return;
+			}
+		}
+		/* Nerf all items. */
+		Items.serpuloItems.each(u => {
+			let ammo = block.ammoTypes.get(u); 
+			if (ammo != null) block.ammoTypes.get(u).damage/=2; 
+		});
+	}
+	if (block instanceof PowerTurret){
+		Blocks.arc.shootType.damage/= 2;
+	}
+});
+/* Arc uses shootType, Lancer uses LightningBulletType(140). Meltdown uses ContinuousLaserBulletType. It's not viable to automate these. */
+
+// I wanted to use Vars.content.units().each(...) [and also blocks()] but I was unable to find a means of filtering for Erekir, since it also doesn't seem to be sorted. Unless you do an ID check... but then this isn't worth it anymore. Is it? 
+// I don't like the idea of sorting for whatever reason, and the .each would be unordered... 
+// Well, it'd still be O(n). [actually O(1) because number of blocks is constant] Therefore it's still acceptable. 
+// Get by ID would be flawed because it wouldn't account for any mods. This would be negligence. 
+
+// Okay, ID checks were **never** going to work. 
+// Also, envEnabled is useless. 
+// I only know to use a cost-basis... 

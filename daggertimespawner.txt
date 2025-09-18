@@ -1,0 +1,23 @@
+initialWaveTimer = 0 * 1000; 
+waveSpacing = 9 * 1000; 
+attackSpacing = 4 * 1000; 
+X = 150; 
+Y = 150; 
+// First run 
+if lastattack === null then
+    initial = @time; 
+    lastattack = @time;
+end; 
+if lastattack + attackSpacing < @time then
+    // time to attack
+    quantity = (@time - initial) \ waveSpacing; 
+    print(quantity+1); 
+    printflush(message2); 
+    byproduct = spawn(@dagger, X, Y, 0, @crux);
+    for i in 0...quantity do
+        byproduct = spawn(@dagger, X, Y, 0, @crux);
+    end; 
+    lastattack = @time; 
+end; 
+print(floor(@time - lastattack) \ 1000); 
+printflush(message1); 

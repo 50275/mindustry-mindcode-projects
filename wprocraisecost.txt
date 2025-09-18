@@ -1,0 +1,30 @@
+// Project Name: Artificially raise cost of building
+
+// We need to check the core's resources. Setting the rate high makes the program more accurate.  
+core = fetch(core, @sharded, 0); 
+setrate(2147483646); 
+
+// Set the initial number of scorches. Ensure there is never a null case. 
+btype = @scorch;
+resourcetype = @copper; 
+resourcequantity = 200;  
+if bprev === null then 
+    bprev = fetch(buildCount, @sharded, btype); 
+end; 
+
+bnow = fetch(buildCount, @sharded, btype); 
+// We need to check if the player has built new buildings 
+// if bprev < bnow, then the player has built new buildings
+
+for i in bprev...bnow do 
+    r = core.sensor(resourcetype);
+    if r < resourcequantity then
+        Q = fetch(buildCount, @sharded, btype); 
+        building = fetch(build, @sharded, Q - 1, btype); 
+        building.setprop(@team, @derelict); 
+    else 
+        core.setprop(resourcetype, r - resourcequantity); 
+    end; 
+end; 
+// After this query finishes, update the amount of buildings the player owns
+bprev = bnow;

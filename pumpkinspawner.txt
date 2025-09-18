@@ -1,0 +1,48 @@
+param type = @fortress;
+param count = 3; 
+param zones = 2; 
+param team = @crux; 
+effectDelay = 1000; 
+
+hail1.setprop(@silicon, 9999); 
+hail2.setprop(@silicon, 9999); 
+hail1.enabled = hail1.@controlled; 
+hail2.enabled = hail2.@controlled; 
+//if hail1.@shooting then
+    baseX = hail1.@shootX; 
+    baseY = hail1.@shootY; 
+//end; 
+//if hail2.@shooting then
+    scaleX = hail2.@shootX - baseX; 
+    scaleY = hail2.@shootY - baseY; 
+//end; 
+print("switch1::spawn units once\n"); 
+print("switch2::show effects\n"); 
+if baseX == 0 then
+    print("Enter hail1 and shoot to place the first spawnpoint. Enter hail2 and shoot to place the others. \n"); 
+    if switch2.@enabled != 0 && last + effectDelay < @time then
+        effect(cross, @thisx, @thisy); 
+        last = @time;  
+    end; 
+elsif switch1.@enabled == 0 then
+    print("Ready to spawn! Enemies will spawn on the <warn> markers.\n"); 
+    print(count); print(" "); print(type); print(" Zones: "); print(zones);
+    if last + effectDelay < @time && switch2.@enabled != 0 then
+        for i in 0...zones do
+            for j in 0...count do
+                effect(warn, baseX + scaleX * i, baseY + scaleY * i);
+            
+            end;  
+        end; 
+        last = @time;  
+    end; 
+else 
+    print("Spawning!\n"); 
+    for i in 0...zones do
+        for j in 0...count do
+            useless = spawn(type, baseX + scaleX * i, baseY + scaleY * i, 0, team);
+        end; 
+    end; 
+    switch1.enabled = 0; 
+end; 
+printflush(message1); 

@@ -1,0 +1,146 @@
+/*
+    result = getblock(block, 0, 0);
+    setblock(block, @air, 0, 0, @derelict, 0);
+    result = spawn(@dagger, 10, 10, 90, @sharded);
+    applyStatus(wet, unit, 10);
+    result = weathersense(@rain);
+    weatherset(@rain, true);
+    spawnwave(10, 10, false);
+    setrule(waveSpacing, 10);
+    message(announce, 3, out @wait);
+    cutscene(pan, 100, 100, 0.06);
+    effect(warn, 0, 0);
+    explosion(@crux, 0, 0, 5, 50, true, true, false, true);
+    setrate(10);
+    result = fetch(unit, @sharded, 0);
+    sync(out var);
+    result = getflag("flag");
+    setflag("flag", true);
+    block1.setprop(@copper, 0);
+    playsound(false, @sfx-pew, 1, 1, 0, true);
+    setmarker(pos, 0, 0, 0);
+    makemarker(shape, 0, 0, 0, true);
+    localeprint("name");
+*/
+/*
+target = getblock(building, 50, 50); 
+print(target);
+print(@maph); 
+printflush(message1); 
+target.enabled = false;
+target.config = @thorium; 
+setrate(40000); */ 
+
+// Main Config
+core = fetch(core, @sharded, 0); 
+setrate(40000);
+
+////////////////////////////////////////
+// DUO SALVO AUTOFILL
+// DUO FILLER
+if core.@copper > 35 then
+    for i in 0...fetch(buildCount, @sharded, @duo) do
+        building = fetch(build, @sharded, i, @duo); 
+        if building.@ammo < 5 then
+            building.setprop(@copper, 3); 
+            core.setprop(@copper, core.@copper - 3); 
+        end; 
+        /*missingammo = building.@ammoCapacity - building.@ammo; 
+        building.setprop(@copper, 999); 
+        core.setprop(@copper, core.@copper - missingammo); */
+    end; 
+end; 
+
+///////////////////////////////////////
+// Salvo Filler
+// ...
+if core.@silicon > 35 then
+    for i in 0...fetch(buildCount, @sharded, @salvo) do
+        building = fetch(build, @sharded, i, @salvo); 
+        if building.@ammo < 5 then
+            building.setprop(@silicon, 3); 
+            core.setprop(@silicon, core.@silicon - 3); 
+        end; 
+    end; 
+end; 
+
+///////////////////////////////////////
+// SCATTER WATER
+for i in 0...fetch(buildCount, @sharded, @scatter) do
+    building = fetch(build, @sharded, i, @scatter); 
+    building.setprop(@team, building.@totalLiquids>0); 
+end; 
+
+//////////////////////////////////////
+// Cyclone & ripple only go on payload conveyors
+for i in 0...fetch(buildCount, @sharded, @cyclone) do
+    building = fetch(build, @sharded, i, @cyclone); 
+    building.setprop(@team, 0); 
+end; 
+for i in 0...fetch(buildCount, @sharded, @ripple) do
+    building = fetch(build, @sharded, i, @ripple); 
+    building.setprop(@team, 0); 
+end; 
+
+//////////////////////////////////////
+// Scorch Hail only on water
+for i in 0...fetch(buildCount, @sharded, @hail) do
+    building = fetch(build, @sharded, i, @hail); 
+    floor = getblock(floor, building.@x, building.@y); 
+    if floor != @hotrock then
+        building.setprop(@team, 0); 
+    end; 
+end; 
+for i in 0...fetch(buildCount, @sharded, @scorch) do
+    building = fetch(build, @sharded, i, @scorch); 
+    floor = getblock(floor, building.@x, building.@y); 
+    if floor != @hotrock then
+        building.setprop(@team, 0); 
+    end; 
+end; 
+
+// Convert grids of 5x5 door to large 
+for i in 0...fetch(buildCount, @sharded, @door) do
+    building = fetch(build, @sharded, i, @door); 
+    X = building.@x;
+    Y = building.@y;
+    // python to mindcode to mindustry
+    query00 = getblock(building, X+0, Y+0);
+    query01 = getblock(building, X+1, Y+0);
+    query02 = getblock(building, X+2, Y+0);
+    query03 = getblock(building, X+3, Y+0);
+    query04 = getblock(building, X+4, Y+0);
+    query10 = getblock(building, X+0, Y+1);
+    query11 = getblock(building, X+1, Y+1);
+    query12 = getblock(building, X+2, Y+1);
+    query13 = getblock(building, X+3, Y+1);
+    query14 = getblock(building, X+4, Y+1);
+    query20 = getblock(building, X+0, Y+2);
+    query21 = getblock(building, X+1, Y+2);
+    query22 = getblock(building, X+2, Y+2);
+    query23 = getblock(building, X+3, Y+2);
+    query24 = getblock(building, X+4, Y+2);
+    query30 = getblock(building, X+0, Y+3);
+    query31 = getblock(building, X+1, Y+3);
+    query32 = getblock(building, X+2, Y+3);
+    query33 = getblock(building, X+3, Y+3);
+    query34 = getblock(building, X+4, Y+3);
+    query40 = getblock(building, X+0, Y+4);
+    query41 = getblock(building, X+1, Y+4);
+    query42 = getblock(building, X+2, Y+4);
+    query43 = getblock(building, X+3, Y+4);
+    query44 = getblock(building, X+4, Y+4);
+    if (query00.@type == @door) && (query01.@type == @door) && (query02.@type == @door) && (query03.@type == @door) && (query04.@type == @door) && (query10.@type == @door) && (query11.@type == @door) && (query12.@type == @door) && (query13.@type == @door) && (query14.@type == @door) && (query20.@type == @door) && (query21.@type == @door) && (query22.@type == @door) && (query23.@type == @door) && (query24.@type == @door) && (query30.@type == @door) && (query31.@type == @door) && (query32.@type == @door) && (query33.@type == @door) && (query34.@type == @door) && (query40.@type == @door) && (query41.@type == @door) && (query42.@type == @door) && (query43.@type == @door) && (query44.@type == @door) then 
+        setblock(block, @large-constructor, X+2, Y+2, @sharded, 0);
+    end; 
+end; 
+
+for i in 0...fetch(buildCount, @sharded, @payload-router) do
+    building = fetch(build, @sharded, i, @payload-router); 
+    if building.@config == @router then
+        setblock(block, @payload-loader, building.@x, building.@y, @sharded, building.@rotation); 
+    end; 
+    if building.@config == @mass-driver then
+        setblock(block, @payload-mass-driver, building.@x, building.@y, @sharded, building.@rotation); 
+    end; 
+end;

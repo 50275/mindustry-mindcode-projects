@@ -1,0 +1,16 @@
+// Replace all dacite walls with scrap walls. 
+// **try** to use the largest wall type possible. 
+setrate(1000); 
+team = @sharded; 
+while !switch1.@enabled do 
+    
+end;
+switch1.enabled = false;  
+
+for i in 0..@mapw do 
+    for j in 0..@maph do
+        if getblock(:block, i, j) == @dacite-wall then
+            setblock(:block, @scrap-wall, i, j, team, 0);
+        end; 
+    end; 
+end; 

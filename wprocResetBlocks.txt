@@ -1,0 +1,11 @@
+while !switch1.@enabled do 
+    print("Switch on: Reset all blocks as if they were just placed."); 
+    printflush(message1); 
+end; 
+switch1.enabled = false; 
+for i in 2...@links do
+    block = getlink(i); 
+    x = block.@x; y = block.@y; team = block.@team; type = block.@type; 
+    setblock(:block, @air, x, y, team, 0);
+    setblock(:block, type, x, y, team, 0);
+end; 

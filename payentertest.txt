@@ -1,0 +1,64 @@
+flag = @thisx + @thisy*1000;
+
+def getUnit(type)
+    ubind(type);
+    first = @unit; 
+    if first != null && first.@flag == 0 then
+ 
+    else 
+        do 
+            ubind(type);
+        loop while (@unit == null || @unit.@flag != 0) && @unit != first; 
+    end; 
+end; 
+
+def countUnits (type, flag, out count)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            // Arguably the dead check is unnecessary. I do anyway. 
+            if @unit.@flag == flag && !(@unit.@dead) then
+                count+=1; 
+            end;
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+end;
+type = @quasar; 
+quantity = 2; 
+
+
+countUnits(type, flag, out held); 
+while held < quantity do
+    getUnit(type); 
+    flag(flag); 
+    held += 1; 
+end; 
+getUnit(type); 
+first = @unit; 
+do 
+    if @unit.@flag != flag then
+        ubind(type); 
+        continue; 
+    end; 
+    boost(1); 
+    move(router1.@x, router1.@y);  
+    payEnter(); 
+    ubind(type); 
+loop while first != @unit; 
+
+if conveyor1.@titanium < 4 then
+    sorter1.config = @titanium; 
+else 
+    sorter1.config = @copper; 
+end; 
+
+
+
+
+

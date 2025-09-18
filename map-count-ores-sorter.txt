@@ -1,0 +1,37 @@
+setrate(1000); 
+ore = sorter1.@config; 
+target = case ore
+    when @copper then 
+        @ore-copper;
+    when @lead then
+        @ore-lead;
+    when @coal then
+        @ore-coal;
+    when @scrap then
+        @ore-scrap; 
+    when @titanium then
+        @ore-titanium; 
+    when @thorium then
+        @ore-thorium; 
+    when @beryllium then
+        @ore-beryllium; 
+    when @tungsten then
+        @ore-tungsten; 
+    else 
+        0; 
+end; 
+if ore == 0 then
+    print("This schematic counts the following floor ores: . Configure the sorter accordingly."); 
+    end(); 
+end;
+count = 0; 
+for i in 0...@mapw do
+    for j in 0...@maph do
+        floor = getblock(:ore, i, j); 
+        if floor == target then
+            count++; 
+        end; 
+    end; 
+end; 
+print(count); 
+printflush(message1); 

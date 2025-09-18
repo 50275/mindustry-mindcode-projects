@@ -1,0 +1,41 @@
+// NOT FOR USE IN MULTIPLAYER
+// baseX, baseY -> cell1.@x, cell1.@y
+// cellsX, cellsY -> the number of cells along the x-axis
+// cells -> the number of cells within the inclusive rectangle from (x1=cell1.@x, y1=cell1.@y, x2=@thisx, y2=@thisy)
+// cellN -> the current number of the cell in use. count left to right, bottom to top in the above rectangle. 
+// cellX, cellY -> the current X and Y coordinates of the cells in use relative to cell1
+// cell -> the reference to the cell in use (i.e. one of cell1, cell2, ...)
+
+// this loop is so emotionally painful to design that i simply refuse
+// although dramatically slower, it's just... easier this way. and much easier to share, too
+
+// use cell1 and own coords.. to... yknow
+// This function is best for *random* access. Array access with this will be so WASTEFUL and SLOW
+param index = 0; 
+param value = 1; 
+setrate(2147483646); 
+BASEX = cell1.@x; 
+BASEY = cell1.@y; 
+CELLSX = @thisx - BASEX + 1; // this is intentional
+CELLSY = @thisy - BASEY + 1; 
+CELLS = CELLSX * CELLSY - 1; // exactly one space is used by the worldproc
+def write(i, new)
+    cellN = i \ 512; 
+    cellX = cellN % CELLSX + BASEX;
+    cellY = cellN \ CELLSX + BASEY; 
+    println(cellX, " ", cellY); 
+    printflush(message1); 
+
+    memory = getblock(building, cellX, cellY); 
+    memory[i % 512] = new; 
+end; 
+write(index, value); 
+/*
+for cellN in 0...cells do
+    cellY = cellN \ cellsX + baseY; // cell within 0~cellsX-1 -> 1, cell within cellsX~cellsX*2-1 -> 2...
+    cellX = cellN % cellsX + baseX; // 0 || cellsX || cellsX*2 ... -> 0
+    cell = getblock(building, cellX, cellY); 
+    for i in 0...512 do
+        cell[i] = cellN * 512 + i; 
+    end; 
+end; */

@@ -1,0 +1,41 @@
+param radius = 24.5; 
+param x = @thisx; 
+param y = @thisy;  
+param thirty = 30; 
+/*
+for i in x - radius...x + radius do
+    for j in y - radius...y + radius do
+        if 
+        
+        setblock(block, @junction, i, j, @derelict, 0);
+    end;
+end; 
+*/
+for i in 0...radius do
+    // find the greatest integer Q such that the distance between 
+        // (@thisx, @thisy) and (i, Q) is less than `radius` 
+    //Q = sqrt(radius^2 - (x2 - x1)^2) + y1; 
+    Q = sqrt(radius**2 - i**2); 
+    Q = floor(Q); 
+    // something about 
+    setblock(block, @junction, i + x, Q + y, 1, 0);
+    setblock(block, @junction, -i + x, Q + y, 1, 0);
+    setblock(block, @junction, i + x, -Q + y, 1, 0);
+    setblock(block, @junction, -i + x, -Q + y, 1, 0);
+    setblock(block, @junction, Q + x, i + y, 1, 0);
+    setblock(block, @junction, -Q + x, i + y, 1, 0);
+    setblock(block, @junction, Q + x, -i + y, 1, 0);
+    setblock(block, @junction, -Q + x, -i + y, 1, 0);
+end; 
+
+xdev = radius * cos(thirty) * 2; 
+ydev = radius * sin(thirty) * 2; 
+xdev = floor(xdev); 
+ydev = floor(ydev); 
+effect(warn, x, y); 
+effect(warn, x, y - radius*2); 
+effect(warn, x, y + radius*2); 
+effect(cross, x + xdev, y + ydev); 
+print(sin(@pi/6) * 2); 
+printflush(message1); 
+

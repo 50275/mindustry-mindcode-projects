@@ -1,0 +1,47 @@
+units = 5; 
+flag = 7;
+def getUnit(type)
+    do
+        ubind(type); 
+    loop while @unit == null; 
+end; 
+
+def countFlags (type, flag, out count)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            // Arguably the dead check is unnecessary. I do anyway. 
+            if @unit.@flag == flag && !(@unit.@dead) then
+                count+=1; 
+            end;
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+end;
+type = @flare; 
+countFlags(type, flag, out held); 
+while held < units do
+    getUnit(type); 
+    flag(flag); 
+    held += 1; 
+end; 
+first = @unit; 
+do 
+    if @unit.@flag != flag then
+        ubind(type); 
+        continue; 
+    end; 
+    move(45, 100); 
+    ubind(type); 
+loop while first != @unit; 
+
+
+
+
+
+
