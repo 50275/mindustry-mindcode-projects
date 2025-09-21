@@ -1,0 +1,18 @@
+start = @time; 
+runningtotal = 0; 
+places = 4; 
+print("Measure incoming throughput of non-hidden non-modded items. Switch to reset."); 
+printflush(message2); 
+while !switch1.@enabled do
+    runningtotal += container1.@totalItems; 
+    for i in 0...@itemCount do // NOT FOR USE WITH HIDDEN OR MODDED ITEMS
+        type = lookup(:item, i); 
+        container1.setprop(type, 0); 
+    end; 
+    // Round 4 decimal places 
+    throughput = runningtotal / (@time - start) * 1000; 
+    throughput = floor((throughput + 0.5) * (10 ** places)) / (10 ** places); 
+    print(throughput); 
+    printflush(message1); 
+end; 
+switch1.enabled = false; 

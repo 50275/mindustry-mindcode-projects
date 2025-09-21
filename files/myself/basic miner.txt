@@ -1,0 +1,43 @@
+param unittype = @quasar; 
+ORE = @titanium;
+if !sorter1.@dead then 
+    ORE = sorter1.@config; 
+end; 
+do
+    ubind(unittype);
+loop while @unit == null; 
+flag = @thisx + @thisy * 1000; 
+first = @unit; 
+if container1 != null then
+    target = container1;
+    outX = container1.@x;
+    outY = container1.@y;
+elsif vault1 != null then
+    target = vault1; 
+    outX = vault1.@x;
+    outY = vault1.@y;
+else
+    target = ulocate(building, core, false, out outX, out outY, out w);
+end;
+found = ulocate(ore, ORE , out oreX, out oreY);
+do 
+    if @unit.@flag != flag then
+        flag(flag); 
+        continue; 
+    end;  
+    boost(1);
+    itemDrop(target, 999); 
+    if @unit.@totalItems > 0 then
+        if @unit.@firstItem != ORE then
+            itemDrop(@air, 999); 
+        end; 
+        if (@unit.@totalItems == @unit.@itemCapacity) then
+            approach(outX, outY, 4);
+            ubind(unittype); 
+            continue; 
+        end; 
+    end; 
+    approach(oreX, oreY, 6); 
+    mine(oreX, oreY);
+    ubind(unittype); 
+loop while first != @unit && first != null; 

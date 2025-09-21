@@ -1,0 +1,167 @@
+// We simplify all
+
+FLAG = @thisx + @thisy * 1000; 
+def getUnit(type, flag)
+    ubind(type);
+    if @unit == null then
+        return 0; 
+    else
+        first = @unit; 
+        if first != null && first.@flag == flag then
+            return @unit; 
+        else 
+            do 
+                ubind(type);
+            loop while (@unit == null || @unit.@flag != flag) && @unit != first; 
+            if @unit == first then
+                return 0; 
+            end;
+        end; 
+    end; 
+    return @unit; 
+end; 
+def countUnits (type)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            count+=1; 
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+    return count; 
+end; 
+// count units section
+// later will check in intervals instead of this
+if true then
+    monos = countUnits(@mono); 
+    // General Form
+    // We're looking to see if we can build more T4. 
+    // If there exists a T3 to upgrade AND it has a destination (for fortress) then we count fortress 
+    // Otherwise we write dummy value 99999 to ensure we don't try to grab T3s that don't exist or can't be upgraded
+    ubind(@fortress); 
+    if !router1.@dead && @unit != null then
+        scepter = countUnits(@scepter); 
+    else 
+        scepter = 99999; 
+    end; 
+    ubind(@quasar); 
+    if @unit != null then
+        vela = countUnits(@vela); 
+    else 
+        vela = 99999; 
+    end; 
+
+    ubind(@spiroct); 
+    if @unit != null then
+        arkyid = countUnits(@arkyid); 
+    else 
+        arkyid = 99999; 
+    end; 
+
+    ubind(@zenith);
+    if @unit != null then
+        antumbra = countUnits(@antumbra); 
+    else 
+        antumbra = 99999; 
+    end; 
+
+    ubind(@mega); 
+    if @unit != null then
+        quad = countUnits(@quad); 
+    else 
+        quad = 99999; 
+    end; 
+end; 
+print(scepter); 
+print("\n"); 
+print(vela); 
+print("\n"); 
+print(arkyid); 
+print("\n"); 
+print(antumbra);
+print("\n"); 
+print(quad);
+printflush(message1); 
+X1 = router1.@x; 
+Y1 = router1.@y; 
+X2 = reconstructor1.@x;
+Y2 = reconstructor1.@y; 
+low = min(scepter, vela, arkyid, antumbra, quad); 
+if !(router1.@dead) && (scepter < monos) then
+    if reconstructor1.@config != null && router1.@payloadCount == 0 then
+        
+    elsif U1.@dead then
+        // TODO when scepters == monos - 1, the schematic will build another scepter and then move another fortress to it, which does nothing
+        U1 = getUnit(@fortress, 0); 
+        flag(FLAG); 
+    else
+        getUnit(@fortress, FLAG); 
+        pathfind(X1, Y1); 
+        if low == scepter then
+            payEnter(); 
+        end; 
+    end; 
+end; 
+if arkyid < monos then
+    if reconstructor1.@config != null then
+        
+    elsif U3.@dead then
+        U3 = getUnit(@spiroct, 0); 
+        flag(FLAG); 
+    else
+        getUnit(@spiroct, FLAG); 
+        pathfind(X2, Y2); 
+        if low == arkyid then
+            payEnter(); 
+        end; 
+    end; 
+end; 
+if vela < monos then
+    if reconstructor1.@config != null then
+        
+    elsif U2.@dead then
+        U2 = getUnit(@quasar, 0);  
+        flag(FLAG); 
+    else
+        hail1.shootp(U2, U2); 
+        getUnit(@quasar, FLAG);
+        boost(1);  
+        pathfind(X2, Y2); 
+        if low == vela then
+            payEnter(); 
+        end; 
+    end; 
+end; 
+if antumbra < monos then 
+    if reconstructor1.@config != null then
+        
+    elsif U4.@dead then
+        U4 = getUnit(@zenith, 0); 
+        flag(FLAG); 
+    else
+        getUnit(@zenith, FLAG); 
+        pathfind(X2, Y2); 
+        if low == antumbra then
+            payEnter(); 
+        end; 
+    end; 
+end; 
+if quad < monos then 
+    if reconstructor1.@config != null then
+        
+    elsif U5.@dead then
+        U5 = getUnit(@mega, 0); 
+        flag(FLAG); 
+    else
+        getUnit(@mega, FLAG); 
+        pathfind(X2, Y2); 
+        if low == antumbra then
+            payEnter(); 
+        end; 
+    end; 
+end; 

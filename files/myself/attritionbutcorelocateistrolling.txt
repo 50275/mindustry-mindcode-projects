@@ -1,0 +1,46 @@
+RADIUS = 49; 
+
+// Attrition calculator serpulo
+setrate(1000); 
+for team in 1...256 do 
+    cores = fetch(coreCount, team);
+    if cores == 0 then
+        continue; 
+    end; 
+    for id in 0...35 do 
+        soldier = lookup(unit, id); 
+        // applyAttrition(soldier); 
+        print(soldier); 
+        printflush(message1); 
+        effect(warn, @unit.@x, @unit.@y); 
+        ubind(solider); 
+        do 
+            core = ulocate(building, core, false, out outx, out outy, out found);
+            S = within(outx, outy, RADIUS);
+            effect(warn, outx, outy); 
+            effect(cross, @unit.@x, @unit.@y); 
+            if S == false then
+                explosion(@derelict, @unit.@x, @unit.@y, 5, 2, true, true, false);
+            end; 
+            ubind(soldier); 
+        loop while @unit.@dead == false && first != @unit; 
+    end; 
+end; /*
+def applyAttrition(unit)
+    do 
+            unbind(); 
+            ubind(soldier); 
+            core = ulocate(building, core, false, out outx, out outy, out found);
+            // WITHIN... UGH
+            eX = @unit.@x; 
+            eY = @unit.@y; 
+            deltaX = outx - eX; 
+            deltaY = outy - eY; 
+            d = sqrt(deltaX ** 2 + deltaY ** 2);
+            if d > RADIUS then
+                explosion(@derelict, eX, eY, 5, 2, true, true, false);
+            end; 
+        loop while @unit != null; 
+    print(solder); 
+    printflush(message1); 
+end; */

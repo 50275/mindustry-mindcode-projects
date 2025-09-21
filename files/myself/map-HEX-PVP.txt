@@ -1,0 +1,289 @@
+RADIUS = 24.5;
+X = 51; 
+Y = 28; 
+setrule(enemyCoreBuildRadius, RADIUS);
+setrate(1000); 
+BLOCK = @dune-wall; 
+BLOCK2 = @dune-wall; 
+FORT1 = @copper-wall; 
+FORT2 = @solar-panel; 
+FORT3 = @mender; 
+FORTTEAM = @derelict; 
+RIGHT = -1; 
+def down(x, y, b) 
+    if x == floor(x) && y == floor(y) then
+        effect(warn, x, y); 
+    
+    else
+        effect(cross, x, y); 
+    end; 
+    x = floor(x); 
+    y = floor(y); 
+    while true do
+        block = getblock(block, x, y); 
+        building = getblock(building, x, y); 
+        if (building == null) && (block.@solid == 0) && (y > 0) then 
+            setblock(block, b, x, y, 1, 0);
+            y -= 1;
+            continue; 
+        end;  
+        break; 
+    end; 
+    
+end; 
+def makeHex(x, y)
+    setblock(block, @core-shard, x, y, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y - 0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y - 0, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+3, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x+3, y - 0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y - 0, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+2, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y - 1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y - 1, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+3, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x+3, y - 1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y - 1, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 1, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+5, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x+5, y - 2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+5, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x+5, y - 3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 4, FORTTEAM, 0);
+    
+    setblock(block, FORT2, x+3, y+2, FORTTEAM, 0);
+    setblock(block, FORT2, x+3, y - 2, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y+2, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT2, x+3, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x+3, y - 3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT3, x+2, y+2, FORTTEAM, 0);
+    setblock(block, FORT3, x+2, y - 2, FORTTEAM, 0);
+    setblock(block, FORT3, x - 2, y+2, FORTTEAM, 0);
+    setblock(block, FORT3, x - 2, y - 2, FORTTEAM, 0);
+
+
+
+    setblock(block, FORT1, x+0, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x+0, y - 2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 0, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 0, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+0, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x+0, y - 3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 0, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 0, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+1, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x+1, y - 2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 1, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 1, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+1, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x+1, y - 3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 1, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 1, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+1, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x+1, y - 4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 1, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 1, y - 4, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+2, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y - 4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y - 4, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+2, y+5, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y - 5, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y+5, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y - 5, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+3, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x+3, y - 4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y - 4, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+3, y+5, FORTTEAM, 0);
+    setblock(block, FORT1, x+3, y - 5, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y+5, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y - 5, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 4, FORTTEAM, 0);
+    
+    setblock(block, FORT2, x+2, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x+2, y - 3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 2, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 2, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT2, x+3, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x+3, y - 3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT3, x+2, y+2, FORTTEAM, 0);
+    setblock(block, FORT3, x+2, y - 2, FORTTEAM, 0);
+    setblock(block, FORT3, x - 2, y+2, FORTTEAM, 0);
+    setblock(block, FORT3, x - 2, y - 2, FORTTEAM, 0);
+
+    setblock(block, FORT1, x+2, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y - 0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y - 0, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+3, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x+3, y - 0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y+0, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y - 0, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+2, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x+2, y - 1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 2, y - 1, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+3, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x+3, y - 1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 3, y - 1, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+1, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 1, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+5, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x+5, y - 2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y+2, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+5, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x+5, y - 3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y+3, FORTTEAM, 0);
+    setblock(block, FORT1, x - 5, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT1, x+4, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x+4, y - 4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y+4, FORTTEAM, 0);
+    setblock(block, FORT1, x - 4, y - 4, FORTTEAM, 0);
+    
+    setblock(block, FORT2, x+3, y+2, FORTTEAM, 0);
+    setblock(block, FORT2, x+3, y - 2, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y+2, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y - 2, FORTTEAM, 0);
+    
+    setblock(block, FORT2, x+3, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x+3, y - 3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y+3, FORTTEAM, 0);
+    setblock(block, FORT2, x - 3, y - 3, FORTTEAM, 0);
+    
+    setblock(block, FORT3, x+2, y+2, FORTTEAM, 0);
+    setblock(block, FORT3, x+2, y - 2, FORTTEAM, 0);
+    setblock(block, FORT3, x - 2, y+2, FORTTEAM, 0);
+    setblock(block, FORT3, x - 2, y - 2, FORTTEAM, 0);
+
+    for i in 0...RADIUS do
+        Q = sqrt(RADIUS**2 - i**2); 
+        Q = floor(Q); 
+        // me when the
+        // TODO choose wall based off of floor
+        // you know, it'd technically be more efficient to save a single array of very many individual
+        // cell indices but like... i'm not coding that stuff
+        // this could be optimized too since it's a simple pattern 
+        down(i + x, y - Q, BLOCK); 
+        down(-i + x, y - Q, BLOCK); 
+        down(Q + x, -i + y, BLOCK2); 
+        down(-Q + x, -i + y, BLOCK2); 
+        setblock(block, BLOCK, i + x, Q + y, 1, 0);
+        setblock(block, BLOCK, -i + x, Q + y, 1, 0);
+        setblock(block, BLOCK, i + x, y - Q, 1, 0);
+        setblock(block, BLOCK, -i + x, y - Q, 1, 0);
+        setblock(block, BLOCK2, Q + x, i + y, 1, 0);
+        setblock(block, BLOCK2, -Q + x, i + y, 1, 0);
+        setblock(block, BLOCK2, Q + x, -i + y, 1, 0);
+        setblock(block, BLOCK2, -Q + x, -i + y, 1, 0);
+    end; 
+end; 
+def generate()
+    // We will start with the bottom-most left hex
+    bigX = X; // TODO processor different placement... or not? 
+    bigY = Y; 
+    for i in 0...99999 do
+        if bigY > @maph then
+            break; 
+        end; 
+        generateRight(bigX - (i%2 != 0) * RADIUS, bigY); 
+        bigY += sqrt(3) * RADIUS; 
+    end; 
+end;
+def generateRight(x, y)
+    while x < @mapw - RADIUS do
+        makeHex(x, y); 
+        x += 2 * RADIUS; 
+    end; 
+    RIGHT = max(RIGHT, x); 
+end; 
+generate();
+
+// todo replace thisx
+left = X - RADIUS * 2; 
+setrule(mapArea, left, 0, left+RIGHT, 1009);
+for i in 0..@mapw do 
+    down(i, @maph, BLOCK2); 
+end; 
+
+// imagine not having stop like LOL who could've thought
+while true do
+    print(0); 
+end; 
+// TODO attrition
+
+

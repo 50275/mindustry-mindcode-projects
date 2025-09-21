@@ -1,0 +1,80 @@
+param unittype = @quasar; // unit chosen for mining
+threshold = 9000; // begin mining sand/coal
+do
+    ubind(unittype);
+while @unit == null; 
+flag = @thisx + @thisy * 1000; 
+first = @unit; 
+if container1 != null then
+    Hex12 = container1;
+    outX = container1.@x;
+    outY = container1.@y;
+    threshold = 200; 
+elsif vault1 != null then
+    Hex12 = vault1; 
+    outX = vault1.@x;
+    outY = vault1.@y; 
+    threshold = 800; 
+else
+    Hex12 = ulocate(:building, :core, false, out outX, out outY);
+end; 
+
+if sorter1.@dead then  
+    ore10 = Hex12.@copper; 
+    ore11 = Hex12.@lead; 
+    if unittype == @quasar || unittype == @mega then 
+        ore12 = Hex12.@titanium; 
+        low = min(ore10, ore11, ore12); 
+    else 
+        ore12 = 2147483647; 
+        low = min(ore10, ore11); 
+    end; 
+    if low > threshold then 
+        ore20 = Hex12.@sand; 
+        ore21 = Hex12.@coal; 
+        low = min(low, ore20, ore21); 
+        if low == ore20 then
+            ORE = @sand;  
+        elsif low == ore21 then
+            ORE = @coal;  
+        else 
+            print("useless"); 
+        end; 
+    end; 
+    if ORE == null then 
+        if low == ore10 then
+            ORE = @copper; 
+        elsif low == ore11 then
+            ORE = @lead; 
+        elsif low == ore12 then
+            ORE = @titanium; 
+        else
+            ORE = @lead; // This shouldn't be possible. 
+        end; 
+    end; 
+else 
+    ORE = sorter1.@config; 
+end; 
+
+do 
+    if @unit.@flag != flag then
+        flag(flag); 
+        continue; 
+    end;  
+    boost(1);
+    itemDrop(Hex12, 999); 
+    if @unit.@totalItems > 0 then
+        if @unit.@firstItem != ORE then
+            itemDrop(@air, 999); 
+        end; 
+        if (@unit.@totalItems == @unit.@itemCapacity) then
+            approach(outX, outY, 4);
+            ubind(unittype); 
+            continue; 
+        end; 
+    end; 
+    found = ulocate(:ore, ORE, out oreX, out oreY);
+    approach(oreX, oreY, 6); 
+    mine(oreX, oreY);
+    ubind(unittype); 
+while first != @unit && first != null; 

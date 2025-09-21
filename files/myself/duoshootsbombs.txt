@@ -1,0 +1,36 @@
+setrate(9999); 
+// NOT FOR USE IN MULTIPLAYER
+r = 11; 
+d = 9; 
+frequency = 0.1; // trigger FREQUENCY times per second. with PERIOD = 1000/frequency (in milliseconds) 
+period = 1000/frequency;  
+G = @time; 
+for i in 0...min(512, fetch(buildCount, @sharded, @duo)) do
+    building = fetch(build, @sharded, i, @duo); 
+    shooting = building.@shooting; 
+    if shooting == false then
+        continue; 
+    end; 
+    lastshot = cell1[i]; 
+    if lastshot + period < @time then
+        // shoot
+        cell1[i] = @time; 
+    else 
+        continue; 
+    end; 
+    ammo = building.sensor(@currentAmmoType); 
+    if ammo == @copper then 
+        d = 9; 
+    elsif ammo == @graphite then
+        d = 18; 
+    elsif ammo == @silicon then
+        d = 12;
+    else
+        d = 0; 
+    end; 
+    d *= 10; 
+    X = building.@shootX; 
+    Y = building.@shootY; 
+    explosion(@crux, X, Y, r, d, true, true, false); 
+    effect(warn, X, Y);
+end; 

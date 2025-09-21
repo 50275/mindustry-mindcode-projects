@@ -1,0 +1,13 @@
+core = fetch(core, @sharded, 0); 
+if core.@copper > 35 then
+    for i in 0...fetch(buildCount, @sharded, @duo) do
+        building = fetch(build, @sharded, i, @duo); 
+        if building.@ammo < 5 then
+            building.setprop(@copper, 3); 
+            core.setprop(@copper, core.@copper - 3); 
+        end; 
+        /*missingammo = building.@ammoCapacity - building.@ammo; 
+        building.setprop(@copper, 999); 
+        core.setprop(@copper, core.@copper - missingammo); */
+    end; 
+end; 

@@ -1,0 +1,37 @@
+#set target = 8W;
+// The unit I'm tracking. 
+param unit = @flare; 
+// The size of the panel I'm using. I am aware of displayWidth and height. 
+size = min(display1.@displayWidth, display1.@displayHeight); 
+// The size of the arrows pointing to other procs. 
+circlesize = 3 + size / 20; 
+
+while true do
+    clear(0,0,0); 
+    print("I locate processors controlling a unit type of your choice. By Hex12.\n"); 
+    image(circlesize, circlesize, unit, circlesize, 0); 
+    if first.@dead then
+        first = ubind(unit); 
+    end; 
+    do
+        if @unit.@controlled == @ctrlProcessor then
+            // Highlight this processor
+            controller = @unit.@controller; 
+            x = controller.@x; 
+            y = controller.@y; 
+            // rotation = angle(x - @thisx, y - @thisy); 
+            rX = x / @mapw * size; rY = y / @maph * size; 
+            item = @unit.@firstItem; 
+            poly(rX, rY, 3, circlesize, rand(360)); 
+            if item == null then
+                poly(rX, rY, 12, circlesize/2, 0); 
+            else
+                image(rX, rY, item, circlesize, 0); 
+            end; 
+            print("{0} {1}\n"); format(x); format(y); 
+        end; 
+        ubind(unit); 
+    while first != @unit; 
+    drawflush(display1); 
+    printflush(message1); 
+end; 

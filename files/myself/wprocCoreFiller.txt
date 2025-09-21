@@ -1,0 +1,13 @@
+team = @sharded; 
+
+// find sharded team's core capacity 
+firstcore = fetch(core, team, 0);
+capacity = firstcore.@itemCapacity; 
+f = capacity \ 2; 
+
+// set sharded items to half of every resource
+for i in 0...@itemCount do
+    material = lookup(item, i); 
+    firstcore.setprop(material, f); 
+end; 
+print("Made by Hex12"); 

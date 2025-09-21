@@ -1,0 +1,109 @@
+let flag = true; 
+let flag2 = true; 
+Vars.content.blocks().each(function(b){
+    if (!(b instanceof Turret)) return;
+
+    let out = {
+        name: b.name,
+        health: b.health,
+        size: b.size,
+        buildTime: b.buildTime / 60,
+        liquidCapacity: b.liquidCapacity,
+        range: b.range / 8,
+        inaccuracy: b.inaccuracy,
+        firerate: (b.shoot == null) ? -1 : 60 / b.reload * b.shoot.shots,
+        targetAir: b.targetAir,
+        targetGround: b.targetGround,
+        coolantMultiplier: b.coolantMultiplier,
+        rotateSpeed: b.rotateSpeed, 
+        scaledHealth: b.scaledHealth, 
+        acceptsWater: (b.coolant instanceof ConsumeLiquid || b.coolant instanceof ConsumeCoolant),
+        acceptsCryofluid: (b.coolant instanceof ConsumeCoolant)
+    };
+    
+    Vars.content.items().each(i => out[i] = 0); 
+    b.requirements.forEach(i => out[i.item] = i.amount); 
+
+    let ammoTypes = [];
+    let prefixes = [];
+
+    if (b instanceof ItemTurret) {
+        out.ammoPerShot = b.ammoPerShot;
+        out.maxAmmo = b.maxAmmo;
+        Vars.content.items().each(function(i){
+            let type = b.ammoTypes.get(i);
+            if (type){
+                ammoTypes.push(type);
+                prefixes.push(i);
+            }
+        });
+    } else if (b instanceof LiquidTurret || b instanceof ContinuousLiquidTurret) {
+        out.ammoPerShot = -1;
+        out.maxAmmo = -1;
+        Vars.content.liquids().each(function(i){
+            let type = b.ammoTypes.get(i);
+            if (type){
+                ammoTypes.push(type);
+                prefixes.push(i);
+            }
+        });
+    } else if (b instanceof PowerTurret) {
+        out.ammoPerShot = -1;
+        out.maxAmmo = -1;
+        ammoTypes.push(b.shootType);
+        prefixes.push("power");
+    } else if (b instanceof ContinuousTurret) {
+        out.ammoPerShot = -1;
+        out.maxAmmo = -1;
+        ammoTypes.push(b.shootType);
+        prefixes.push("nitrogen"); 
+    }
+
+    let base = "";
+    for (let key in out){
+        if (!out.hasOwnProperty(key)) continue;
+        let val = out[key];
+        base += key + ":" + ((typeof val === "number") ? Math.round(val * 100) / 100 : val) + " ";
+    }
+    if (flag) {
+        flag = false; 
+        print(Object.keys(out)); 
+    }
+
+    while (ammoTypes.length > 0) {
+        let a = ammoTypes.shift();
+        let prefix = prefixes.shift();
+        let line = base;
+	let first = true; 
+        while (a != null && a != undefined) {
+            let additives = {
+                marker: "begin",
+                damage: Math.max(a.damage, 0),
+                splashDamage: a.splashDamage,
+                splashRadius: a.splashDamageRadius > 0 ? a.splashDamageRadius / 8 : 0,
+                ammoMult: a.ammoMultiplier, 
+                reloadMult: a.reloadMultiplier,
+                status: a.status,
+                statusDuration: a.statusDuration / 60,
+                fragBullets: Math.max(a.fragBullets, 0), 
+                rangeChange: a.rangeChange / 8,
+                knockback: a.knockback,
+                pierce: a.pierce,
+                pierceCap: ((a.pierce && a.pierceCap == 0) ? 999 : Math.max(a.pierceCap, 0)), 
+                lightning: a.lightning, 
+                lightningDamage: (b === Blocks.cyclone) ? a.damage : a.lightningDamage,
+                bulletSpeed: a.speed
+            }; 
+	    if(flag2) { flag2 = false; print(Object.keys(additives)); }
+
+            for (let k in additives){
+                if (!additives.hasOwnProperty(k)) continue;
+                let v = additives[k];
+                line += k + ":" + ((typeof v === "number") ? Math.round(v * 100) / 100 : v) + " ";
+            }
+
+            a = a.fragBullet;
+        }
+        print(prefix + " " + line);
+    }
+});

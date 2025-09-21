@@ -1,0 +1,56 @@
+flag = @thisx + @thisy * 1000; 
+type = @flare;
+while @unit == null || (@unit.@flag != 0 && @unit.@flag != flag) do
+    ubind(type);  // Bind to the first available unit of the specified type
+end;
+first = @unit;  // Save reference to the first bound unit
+
+c = 0;
+while c < @links do
+    // Get the current dome
+    dome = getlink(c);
+    if dome == null then
+        c += 1;  // Skip to the next linked building if this one is invalid
+        continue;
+    end;
+    // If the unit has items, attempt to deliver them
+    if @unit.@totalItems > 0 then
+        approach(dome.@x, dome.@y, 2);  // Move to the dome
+        itemDrop(dome, 9999);  // Drop items into the dome
+        if @unit.@silicon == 0 && @unit.@phase-fabric == 0 then
+            itemDrop(@air, 9999); 
+        elsif @unit.@silicon > 0 && dome.@silicon == 10 then 
+            itemDrop(@air, 9999); 
+        elsif @unit.@phase-fabric > 0 && dome.@phase-fabric == 10 then
+            itemDrop(@air, 9999); 
+        end; 
+        //itemDrop(@air, 9999);  // Drop unwanted items to clear inventory
+    else
+        useless = ulocate(building, core, false, out corex, out corey, out target);
+        // Locate the core and retrieve items for the dome
+        // distance = sqrt((dome.@x - corex) ** 2 + (dome.@y - corey) ** 2); 
+        // Deliver items the dome needs
+        if dome.@phase-fabric < 6 then // 1+distance / 9 then
+            approach(corex, corey, 4);  // Move to the core
+            flag(flag); 
+            itemTake(target, @phase-fabric, 10 - dome.@phase-fabric);
+        elsif dome.@silicon < 6 then
+            approach(corex, corey, 4);  // Move to the core
+            flag(flag); 
+            itemTake(target, @silicon, 10 - dome.@silicon);
+        end;
+    end;
+    
+    // Increment to the next dome
+    c += 1;
+    // Rebind to the correct unit
+    do 
+        ubind(type);
+    loop while @unit == null || (@unit.@flag != 0 && @unit.@flag != flag);  // Ensure the same unit type is always controlled
+    if first == @unit then
+        break; 
+    end; 
+end;
+while first != @unit do
+    ubind(type); 
+end; 

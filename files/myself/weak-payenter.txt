@@ -1,0 +1,15 @@
+// payenter test
+type = @flare; 
+
+// Aggressively posess a unit. 
+def getUnit(type)
+    do
+        ubind(type); 
+    loop while @unit == null; 
+end; 
+
+getUnit(type); 
+while !@unit.@dead do
+    move(conveyor1.@x, conveyor1.@y); 
+    payEnter(); 
+end; 

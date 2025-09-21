@@ -1,0 +1,12 @@
+setrate(99999); 
+c = 0; 
+for x in 0..@mapw do
+    for y in 0..@maph do // the choice to use two periods is intentional (inclusive)
+        ore = getblock(ore, x, y); 
+        if ore == @ore-titanium then 
+            c += 1; 
+        end; 
+    end;
+end; 
+print(c);
+printflush(message1); 

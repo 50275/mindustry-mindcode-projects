@@ -1,0 +1,11 @@
+#set target = 8W;
+setrule(:enemyCoreBuildRadius, 0);
+
+// constants
+teams = 6; 
+param core = @core-nucleus; 
+size = core.sensor(@size); 
+x = @thisx + size - size \ 2; 
+for i in 0...teams do
+    setblock(:block, core, x + i*size, @thisy + 0, i, 0); 
+end; 

@@ -1,0 +1,22 @@
+type = @horizon;
+while @unit == null && @unit.@flag != 0 do
+    ubind(type); 
+end;
+first = @unit; 
+flag(7); // TODO
+c = 0;
+while true do
+    move(c, c); 
+    c+=1; 
+    ubind(type); 
+    while @unit == null && @unit.@flag != 0 do
+        ubind(type); 
+    end;
+    flag(7); 
+    if first == null then
+        end(); 
+    end;
+    if @unit == first then
+        c = 0;
+    end;
+end;

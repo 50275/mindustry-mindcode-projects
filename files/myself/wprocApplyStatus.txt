@@ -1,0 +1,9 @@
+param team = @crux;
+param duration = 4000; 
+for i in 0...@unitCount do
+    unitType = lookup(:unit, i); 
+    for j in 0...fetch(:unitCount, team, unitType) do
+        unit = fetch(:unit, team, unitType, j);
+        applyStatus(:unmoving, unit, duration);
+    end; 
+end; 

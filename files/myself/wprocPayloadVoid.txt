@@ -1,0 +1,28 @@
+// """Payload Void""" by Hex12
+// Every `delay` seconds, kill all uncontrolled non-core units (leave `threshold` of each type of unit alive). 
+
+TEAM = @sharded; // Target team
+threshold = 1; // Leave at most `threshold` uncontrolled units alive. 
+delay = 1; // Program runs every `delay` seconds
+setrate(1000); 
+for u in 0...@unitCount do
+    class = lookup(unit, u); 
+    if class == @alpha || class == @beta || class == @gamma || class == @evoke 
+        || class == @incite || class == @emanate then
+        continue; 
+    end; 
+    quantity = fetch(unitCount, TEAM, class); 
+    counter = 0; 
+    for j in 0...quantity do
+        target = fetch(unit, TEAM, j, class); 
+        if target.@controlled != 0 then 
+            counter = counter; // how do I do nothing, lol
+        else
+            if counter >= threshold then
+                target.setprop(@x, -9999999); 
+            end; 
+            counter++; 
+        end; 
+    end; 
+end; 
+wait(delay); 

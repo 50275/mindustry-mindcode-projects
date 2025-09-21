@@ -1,0 +1,86 @@
+param team = @sharded; 
+param terrain = @dacite-wall; 
+setrate(1000); 
+button = true; 
+while true do
+    if switch1.@enabled == button then 
+        if true then 
+            // Prevent code duplication even if it extends runtime. (O(n) changes forbidden) 
+            ID = 31; 
+            // 1x1 
+            block = lookup(:block, ID++); 
+            for i in 0...fetch(:buildCount, team, block) do
+                target = fetch(:build, @sharded, 0, block);
+                blockX = target.@x; blockY = target.@y; 
+                setblock(:block, @air, blockX, blockY, team, 0);
+            end; 
+            // 2x2
+            block = lookup(:block, ID++); 
+            for i in 0...fetch(:buildCount, team, block) do
+                target = fetch(:build, @sharded, 0, block);
+                blockX = target.@x; blockY = target.@y; 
+                setblock(:block, @air, blockX, blockY, team, 0);
+                setblock(:block, @air, blockX, blockY+1, team, 0);
+                setblock(:block, @air, blockX+1, blockY, team, 0);
+                setblock(:block, @air, blockX+1, blockY+1, team, 0);
+            end; 
+            // 3x3 
+            block = lookup(:block, ID++); 
+            for i in 0...fetch(:buildCount, team, block) do
+                target = fetch(:build, @sharded, 0, block);
+                blockX = target.@x; blockY = target.@y; 
+setblock(:block, @air, blockX - 1, blockY - 1, team, 0);
+setblock(:block, @air, blockX - 1, blockY, team, 0);
+setblock(:block, @air, blockX - 1, blockY + 1, team, 0);
+
+setblock(:block, @air, blockX, blockY - 1, team, 0);
+setblock(:block, @air, blockX, blockY, team, 0);
+setblock(:block, @air, blockX, blockY + 1, team, 0);
+
+setblock(:block, @air, blockX + 1, blockY - 1, team, 0);
+setblock(:block, @air, blockX + 1, blockY, team, 0);
+setblock(:block, @air, blockX + 1, blockY + 1, team, 0);
+            end; 
+            // 4x4
+            block = lookup(:block, ID++); 
+            for i in 0...fetch(:buildCount, team, block) do
+                target = fetch(:build, @sharded, 0, block);
+                blockX = target.@x; blockY = target.@y; 
+setblock(:block, @air, blockX - 1, blockY - 1, team, 0);
+setblock(:block, @air, blockX - 1, blockY, team, 0);
+setblock(:block, @air, blockX - 1, blockY + 1, team, 0);
+setblock(:block, @air, blockX - 1, blockY + 2, team, 0);
+
+setblock(:block, @air, blockX, blockY - 1, team, 0);
+setblock(:block, @air, blockX, blockY, team, 0);
+setblock(:block, @air, blockX, blockY + 1, team, 0);
+setblock(:block, @air, blockX, blockY + 2, team, 0);
+
+setblock(:block, @air, blockX + 1, blockY - 1, team, 0);
+setblock(:block, @air, blockX + 1, blockY, team, 0);
+setblock(:block, @air, blockX + 1, blockY + 1, team, 0);
+setblock(:block, @air, blockX + 1, blockY + 2, team, 0);
+
+setblock(:block, @air, blockX + 2, blockY - 1, team, 0);
+setblock(:block, @air, blockX + 2, blockY, team, 0);
+setblock(:block, @air, blockX + 2, blockY + 1, team, 0);
+setblock(:block, @air, blockX + 2, blockY + 2, team, 0);
+
+            end; 
+        else 
+            // Command all the other wprocs to transform terrain. 
+            x = processor1.@x; 
+            y = processor1.@y; 
+            width = x - @thisx; 
+            height = y - @thisy; 
+            for i in @thisx...x do 
+                for j in @thisy...y do 
+                    block = getblock(:building, i, j);
+                    block.write(1, @counter); 
+                end; 
+            end; 
+        end; 
+        button = !button; 
+    end; 
+
+end; 

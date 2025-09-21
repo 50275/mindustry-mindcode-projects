@@ -1,0 +1,55 @@
+RADIUS = 24.5;
+setrate(100); 
+def makeHex(x, y)
+    for i in 0...RADIUS do
+        Q = sqrt(RADIUS**2 - i**2); 
+        Q = floor(Q); 
+        // me when the
+        // TODO choose wall based off of floor
+        // you know, it'd technically be more efficient to save a single array of very many individual
+        // cell indices but like... i'm not coding that stuff
+        setblock(block, @junction, i + x, Q + y, 1, 0);
+        setblock(block, @junction, -i + x, Q + y, 1, 0);
+        setblock(block, @junction, i + x, -Q + y, 1, 0);
+        setblock(block, @junction, -i + x, -Q + y, 1, 0);
+        setblock(block, @junction, Q + x, i + y, 1, 0);
+        setblock(block, @junction, -Q + x, i + y, 1, 0);
+        setblock(block, @junction, Q + x, -i + y, 1, 0);
+        setblock(block, @junction, -Q + x, -i + y, 1, 0);
+    end; 
+end; 
+def generate()
+    // We will start with the bottom-most left hex
+    bigX = @thisx; 
+    bigY = @thisy; 
+    while true do 
+        if bigY > @maph then
+            break; 
+        end; 
+        generateRight(bigX, bigY); 
+        bigY += 2*sqrt(3) * RADIUS; 
+    end; 
+
+    // Then we will do the left-most bottom hex
+    bigX = @thisx - RADIUS; // shift like in Eviction
+    bigY = @thisy + sqrt(3) * RADIUS;  
+    while true do 
+        if bigY > @maph - RADIUS then
+            break; 
+        end; 
+        generateRight(bigX, bigY); 
+        bigY += 2*sqrt(3) * RADIUS; 
+    end; 
+end;
+def generateRight(x, y)
+    while x < @mapw - RADIUS do
+        makeHex(x, y); 
+        x += 2 * RADIUS; 
+    end; 
+end; 
+generate();
+// imagine not having stomp like LOL who could've thought
+while true do
+    print(0); 
+end; 
+
