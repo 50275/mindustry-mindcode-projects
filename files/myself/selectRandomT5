@@ -1,0 +1,40 @@
+#set target = 8W;
+param TEAM = @sharded; // The team this targeting shoots. 
+
+// Count all the player's T5s
+sum = 0; // The number of T5s the player owns. 
+for i in @reign, @corvus, @toxopid, @navanax, @omura, @oct, @eclipse, @conquer, @collaris, @disrupt do
+    quantity = fetch(:unitCount, TEAM, i); 
+    sum += quantity; 
+end; 
+
+// Select one of the player's T5s
+if sum == 0 then
+    print("There aren't any units to choose."); 
+    printflush(message1); 
+    end(); // without this mindcode writes jump 0 0 always its so ugly
+else
+    print("I choose: "); 
+    // Select the [index]th T5
+    index = floor(rand(sum)); 
+    selected = null; 
+    for i in @reign, @corvus, @toxopid, @navanax, @omura, @oct, @eclipse, @conquer, @collaris, @disrupt do
+        quantity = fetch(:unitCount, TEAM, i); 
+        if index >= quantity then
+             index -= quantity; 
+             continue; 
+        end; 
+        selected = fetch(:unit, @sharded, index, i);
+        break; 
+    end; 
+    print(selected); 
+    print(" at "); 
+    print(floor(selected.@x));
+    print(", "); 
+    print(floor(selected.@y));  
+    printflush(message1); 
+end; 
+
+
+
+
