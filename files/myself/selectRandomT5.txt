@@ -16,7 +16,8 @@ if sum == 0 then
 else
     print("I choose: "); 
     // Select the [index]th T5
-    index = floor(rand(sum)); 
+    index = rand(sum);
+    index = floor(index); 
     selected = null; 
     for i in @reign, @corvus, @toxopid, @navanax, @omura, @oct, @eclipse, @conquer, @collaris, @disrupt do
         quantity = fetch(:unitCount, TEAM, i); 
@@ -29,9 +30,13 @@ else
     end; 
     print(selected); 
     print(" at "); 
-    print(floor(selected.@x));
+    useless = selected.@x; 
+    useless = floor(useless); 
+    print(useless);
     print(", "); 
-    print(floor(selected.@y));  
+    useless = selected.@y; 
+    useless = floor(useless);
+    print(useless);  
     printflush(message1); 
 end; 
 
