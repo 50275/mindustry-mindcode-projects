@@ -1,0 +1,267 @@
+// PayEnter program.  
+// Creates the unit you have the fewest of (but only units you approve of)
+// If conveyor1.@type == @payload-conveyor, then redirects units there instead
+// Avoids unit cap by assuming the number of monos is the unit cap
+// This is a slow and heavy program. 
+
+// TODO: 
+//  Provide customizable variable unit queue 
+//  Provide manual override / stop switch (this program could pull expensive units to death)
+//  Make takeUnit actually take nearest unit
+//  Defer counting process to another processor
+
+noinit INGREDIENT1, INGREDIENT2, INGREDIENT3, INGREDIENT4, INGREDIENT5, INGREDIENT6, INGREDIENT7, 
+    UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7, 
+    BLOCK1, TIER,
+    reference1, reference2;
+
+// If TRUE (truthy), the program won't produce units if it would exceed the number of monos. 
+param monosAreUnitCap = 1; 
+
+// The types of units that this processor accepts. Dagger, crawler, and naval tree disabled by default for demo.  
+param produceDagger = 0; 
+param produceNova = 1; 
+param produceCrawler = 0; 
+param produceFlare = 1; 
+param produceMono = 1; 
+param produceRisso = 0; 
+param produceOxynoe = 0; 
+
+// For printing only
+SECOND = round(@second); 
+
+// @returns the number of units of a certain type
+def countUnits(type)
+    count = 0;
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            count+=1; 
+            ubind(type);
+            if @unit == first then
+                break;
+            end;
+        end;
+    end;
+    return count; 
+end; 
+
+// @returns whether there is at least one of this type of unit available [not possessed by player or other processor]
+def canTakeUnit(type) 
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do 
+            controlled = @unit.@controlled; 
+            if controlled == 0
+            //    || controlled == @ctrlCommand // can't take from player
+                || controlled == @ctrlPlayer 
+            //    || controlled == @ctrlProcessor // should I steal units? 
+                then
+                return true; 
+            end; 
+            ubind(type);
+            if @unit == first then
+                return false;
+            end;
+        end;
+    end;
+    return false; 
+end;
+
+// @returns a unit of the given type. TODO make it actually return nearest unit
+def takeUnit(type)
+    lowestDistance = 2 ** 50; 
+    selected = null; 
+
+    ubind(type);
+    if @unit != null then
+        first = @unit;
+        while !first.@dead do  
+            length = len(first.@x - @thisx, first.@y - @thisy); 
+            if length < lowestDistance then
+                lowestDistance = length; 
+                selected = @unit; 
+            end; 
+            ubind(type);
+            if @unit == first then
+                break; 
+            end; 
+        end;
+    end; 
+    return selected; 
+end;
+
+// Initializes lots of global variables
+def loadUnitData()
+    // The 52-flag this program uses. The minimum flag value is 67108864. 
+    FLAG = @thisx + (@thisy + 1) * 2 ** 26;
+    // The tier of unit to be upgraded; 1~4. 
+    TIER = 2 ** 26;  
+    // 0101100
+    // dagger nova crawler flare mono risso retusa
+    // volatile? 
+
+    // Get the tier of unit to be upgraded
+    TIER = case reconstructor1.@type
+        when @additive-reconstructor then 1; 
+        when @multiplicative-reconstructor then 2; 
+        when @exponential-reconstructor then 3; 
+        when @tetrative-reconstructor then 4; 
+        else -1; 
+    end; 
+    
+    if TIER < 0 then
+        giveUp(); 
+    end; 
+
+    BLOCK1 = reconstructor1; 
+
+    INGREDIENT1 = lookup(:unit, 0 * 5 + TIER - 1); 
+    INGREDIENT2 = lookup(:unit, 1 * 5 + TIER - 1); 
+    INGREDIENT3 = lookup(:unit, 2 * 5 + TIER - 1); 
+    INGREDIENT4 = lookup(:unit, 3 * 5 + TIER - 1); 
+    INGREDIENT5 = lookup(:unit, 4 * 5 + TIER - 1); 
+    INGREDIENT6 = lookup(:unit, 5 * 5 + TIER - 1); 
+    INGREDIENT7 = lookup(:unit, 6 * 5 + TIER - 1); 
+
+    UNIT1 = lookup(:unit, 0 * 5 + TIER); 
+    UNIT2 = lookup(:unit, 1 * 5 + TIER); 
+    UNIT3 = lookup(:unit, 2 * 5 + TIER); 
+    UNIT4 = lookup(:unit, 3 * 5 + TIER); 
+    UNIT5 = lookup(:unit, 4 * 5 + TIER); 
+    UNIT6 = lookup(:unit, 5 * 5 + TIER); 
+    UNIT7 = lookup(:unit, 6 * 5 + TIER); 
+end;
+
+// Chooses a certain unit to build ... 
+def chooseUnit()
+    // We need a reconstructor to use payEnter
+    // TODO allow deferring to another processor    
+
+    // Verify:
+    // 1. that we want to build the unit
+    // 2. that we can actually take one of those units
+
+    // Get the number of units (products) of each tree (any undesirable tree is assumed to have 2 ** 26 units)
+//    tree1 = ((0b0000001 & TREES) && canTakeUnit(INGREDIENT1)) ? countUnits(UNIT1) : 2 ** 26; 
+//    tree2 = ((0b0000010 & TREES) && canTakeUnit(INGREDIENT2)) ? countUnits(UNIT2) : 2 ** 26; 
+//    tree3 = ((0b0000100 & TREES) && canTakeUnit(INGREDIENT3)) ? countUnits(UNIT3) : 2 ** 26; 
+//    tree4 = ((0b0001000 & TREES) && canTakeUnit(INGREDIENT4)) ? countUnits(UNIT4) : 2 ** 26; 
+//    tree5 = ((0b0010000 & TREES) && canTakeUnit(INGREDIENT5)) ? countUnits(UNIT5) : 2 ** 26; 
+//    tree6 = ((0b0100000 & TREES) && canTakeUnit(INGREDIENT6)) ? countUnits(UNIT6) : 2 ** 26; 
+//    tree7 = ((0b1000000 & TREES) && canTakeUnit(INGREDIENT7)) ? countUnits(UNIT7) : 2 ** 26; 
+    tree1 = (produceDagger  && canTakeUnit(INGREDIENT1)) ? countUnits(UNIT1) : 2 ** 26; 
+    tree2 = (produceNova    && canTakeUnit(INGREDIENT2)) ? countUnits(UNIT2) : 2 ** 26; 
+    tree3 = (produceCrawler && canTakeUnit(INGREDIENT3)) ? countUnits(UNIT3) : 2 ** 26; 
+    tree4 = (produceFlare   && canTakeUnit(INGREDIENT4)) ? countUnits(UNIT4) : 2 ** 26; 
+    tree5 = (produceMono    && canTakeUnit(INGREDIENT5)) ? countUnits(UNIT5) : 2 ** 26; 
+    tree6 = (produceRisso   && canTakeUnit(INGREDIENT6)) ? countUnits(UNIT6) : 2 ** 26; 
+    tree7 = (produceOxynoe  && canTakeUnit(INGREDIENT7)) ? countUnits(UNIT7) : 2 ** 26; 
+    
+    // Get the unit type with the fewest number of units
+    // TODO avoid unit limit by comparing against mono number
+    tree = min(tree1, tree2, tree3, tree4, tree5, tree6, tree7); 
+    if monosAreUnitCap && tree > countUnits(@mono) then
+        end(); 
+    end;  
+    tempvalue = case tree 
+        when tree1 then 0; 
+        when tree2 then 1; 
+        when tree3 then 2; 
+        when tree4 then 3; 
+        when tree5 then 4; 
+        when tree6 then 5; 
+        when tree7 then 6;
+        else 2 ** 26; 
+    end;  
+    if tempvalue == 2 ** 26 then 
+        //print("tree index doesn't exist???"); 
+        //printflush(message2);   
+        giveUp(); 
+    end; 
+    unit = lookup(:unit, tempvalue * 5 + TIER - 1);
+    return unit; 
+end; 
+
+def giveUp()
+    unbind(); 
+    end(); 
+end; 
+
+// TODO flag
+// TODO asynchronous unit calls / queue multiple units
+def seek(reference)
+    ubind(reference); 
+    destination = (conveyor1.@type == @payload-conveyor) ? conveyor1 : reconstructor1; 
+    if !reference.sensor(@dead) then
+        flag(FLAG); 
+        move(destination.@x, destination.@y); 
+        boost(1); 
+        distance = len(destination.@x - reference.@x, destination.@y - reference.@y); 
+        // if true then
+        if distance < (destination.@size / 2) then
+            payEnter(); 
+        else
+            //print("Can't payEnter. The unit is too far away."); 
+            //print(distance); 
+        end; 
+        //print(round(reference.@x)); 
+        //print(" ");
+        //print(round(reference.@y)); 
+        //print(" "); 
+        //print(SECOND); 
+        //printflush(message1); 
+    end; 
+end; 
+
+if BLOCK1 != reconstructor1 then
+    loadUnitData(); 
+end; 
+//print("I've loaded the unit data.\n"); 
+unit = chooseUnit(); 
+if reference1.@dead then
+    reference1 = takeUnit(unit); 
+end; 
+seek(reference1); 
+if reference2.@dead then
+    reference2 = takeUnit(unit); 
+end; 
+seek(reference2); 
+
+// End of program
+
+
+
+
+
+//print("I've chosen my unit. "); 
+//print(unit);
+//print(" ");  
+//print(SECOND); 
+//print("\n"); 
+//printflush(message1); 
+
+// while BLOCK1 == reconstructor1 do
+//     // Try to produce the unit
+//     // TODO reserve more units
+//     if reference == null then
+//         reference = takeUnit(unit); 
+//     end; 
+//     // move(@thisx, @thisy); 
+//     move(reconstructor1.@x, reconstructor1.@y); 
+//     distance = len(reconstructor1.@x - @unit.@x, reconstructor1.@y - @unit.@y); 
+//     
+//     if true then
+//     // if distance < reconstructor1.@size then
+//         payEnter(); 
+//     else
+//         //print("Can't payEnter. The unit is too far away."); 
+//         //print(distance); 
+//     end; 
+//     //print(unit); 
+//     //print(@second); 
+//     //printflush(message1);
+//     //printflush(message2); // wipe error log
+// end; 
