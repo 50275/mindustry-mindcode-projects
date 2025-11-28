@@ -1,4 +1,5 @@
 // PayEnter program.  
+// Works with any tier of reconstructor
 // Creates the unit you have the fewest of (but only units you approve of)
 // If conveyor1.@type == @payload-conveyor, then redirects units there instead
 // Avoids unit cap by assuming the number of monos is the unit cap
@@ -229,39 +230,6 @@ if reference2.@dead then
     reference2 = takeUnit(unit); 
 end; 
 seek(reference2); 
+print("Made by Hex12"); 
 
 // End of program
-
-
-
-
-
-//print("I've chosen my unit. "); 
-//print(unit);
-//print(" ");  
-//print(SECOND); 
-//print("\n"); 
-//printflush(message1); 
-
-// while BLOCK1 == reconstructor1 do
-//     // Try to produce the unit
-//     // TODO reserve more units
-//     if reference == null then
-//         reference = takeUnit(unit); 
-//     end; 
-//     // move(@thisx, @thisy); 
-//     move(reconstructor1.@x, reconstructor1.@y); 
-//     distance = len(reconstructor1.@x - @unit.@x, reconstructor1.@y - @unit.@y); 
-//     
-//     if true then
-//     // if distance < reconstructor1.@size then
-//         payEnter(); 
-//     else
-//         //print("Can't payEnter. The unit is too far away."); 
-//         //print(distance); 
-//     end; 
-//     //print(unit); 
-//     //print(@second); 
-//     //printflush(message1);
-//     //printflush(message2); // wipe error log
-// end; 
