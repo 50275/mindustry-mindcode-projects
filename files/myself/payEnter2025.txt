@@ -56,8 +56,8 @@ def canTakeUnit(type)
         while !first.@dead do 
             controlled = @unit.@controlled; 
             if controlled == 0
-            //    || controlled == @ctrlCommand // can't take from player
-                || controlled == @ctrlPlayer 
+                || controlled == @ctrlCommand 
+            //    || controlled == @ctrlPlayer // can't take from player
             //    || controlled == @ctrlProcessor // should I steal units? 
                 then
                 return true; 
