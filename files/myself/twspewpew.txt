@@ -1,0 +1,53 @@
+// sorter1.@config
+param UNIT = @dagger; 
+ITEM = sorter1.@config; 
+
+
+print("Unintelligent pew-pew logic by Hex12. [red]Lacks pathfinding logic. [white]Version not intended for public use. Bind a sorter."); 
+printflush(message1); 
+
+// If there's no item, default to copper. 
+if !ITEM then 
+    ITEM = @copper; 
+end; 
+
+first = ubind(UNIT);
+do 
+    if @unit.@totalItems > 1 then 
+        unbind();  
+    else  
+        b_storage = ulocate(:building, :storage, false, out x1, out y1, out found1);
+        b_core = ulocate(:building, :storage, false, out x2, out y2, out found2);
+        destination = b_storage; 
+        
+        if(b_storage.sensor(ITEM) < 100 || len(x2 - @thisx, y2 - @thisy) < len(x1 - @thisx, y1 - @thisy)) then
+            if(b_core.sensor(ITEM) < 100) then
+                suicide(); 
+            end; 
+            destination = b_core; 
+        end; 
+
+        // Shoot, because controlled units don't shoot. 
+        // enemy = uradar(:enemy, :any, :any, :distance, 1);
+        // targetp(enemy, enemy); 
+        
+        // Get items from my object. 
+        DX = sorter1.@x; 
+        DY = sorter1.@y; 
+        pathfind(DX, DY); 
+        itemTake(destination, ITEM, 99999); 
+    end;   
+    ubind(UNIT); 
+while first != @unit;
+
+// Something went wrong. Unbind all the units to avoid harming the player. 
+def suicide()
+    print("suicide function called"); 
+    printflush(message2); 
+    first = ubind(UNIT); 
+    do 
+        unbind(); 
+        ubind(UNIT);
+    while first != @unit; 
+    end(); 
+end; 
